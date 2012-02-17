@@ -3,15 +3,16 @@ import random
 import pygame
 
 import helpers
+import settings
 
 class Creature(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, gender, direction, map_reference):
         pygame.sprite.Sprite.__init__(self)
         self.map_reference = map_reference
         self.gender = gender
-        self.speed = 3
+        self.speed = 4
         self.direction = direction
-        self.image, self.rect = helpers.load_image(gender + '.gif')
+        self.image, self.rect = helpers.load_image(gender + '.png')
         self.rect.topleft = (x_pos, y_pos)
         self.current_tile = self.map_reference.get_tile_at_index(self.rect.center)
 
@@ -19,36 +20,25 @@ class Creature(pygame.sprite.Sprite):
         """
 
         """
+        print "Creature.update()"
+        print "Current center position:", self.rect.center, "moving towards the", self.direction
         current_tile = self.map_reference.get_tile_at_point(self.rect.center)
         if not current_tile == self.current_tile:
             self.current_tile = current_tile
             self.pick_new_direction()
-        tile_x_offset, tile_y_offset = self.map_reference.get_tile_index_at_point(self.rect.center)
 
-        tile = self.map_reference.get_tile_at_index((tile_x_offset, tile_y_offset))
         if self.direction is 'north':
             self.rect.top -= self.speed
-            next_tile = self.map_reference.get_tile_at_index((tile_x_offset, tile_y_offset - 1))
         if self.direction is 'east':
             self.rect.left += self.speed
-            next_tile = self.map_reference.get_tile_at_index((tile_x_offset + 1, tile_y_offset))
         if self.direction is 'south':
             self.rect.top += self.speed
-            next_tile = self.map_reference.get_tile_at_index((tile_x_offset, tile_y_offset + 1))
         if self.direction is 'west':
             self.rect.left -= self.speed
-            next_tile = self.map_reference.get_tile_at_index((tile_x_offset - 1, tile_y_offset))
-
-        if not next_tile.is_passable():
-            self.pick_new_direction(tile_x_offset, tile_y_offset)
 
     def pick_new_direction(self):
         """Picks a new direction to move in. Discards the opposite of the
-        current direction.
-
-        Keyword arguments:
-        tile_x --
-        tile_y --
+        current direction so that the creature won't suddenly turn around.
 
         """
         opposite_directions = {'north': 'south', 'east': 'west', 'south': 'north', 'west': 'east'}
@@ -59,11 +49,15 @@ class Creature(pygame.sprite.Sprite):
             print "These are my choices:"
             for i in choices:
                 print i
-            self.direction = random.choice(choices)
-        self.align_self_to_path()
+            new_direction = random.choice(choices)
+        else:
+            new_direction = self.direction
+        if self.direction is not new_direction:
+            self.direction = new_direction
+            self.align_self_to_path()
 
     def align_self_to_path(self):
         current_x, current_y = self.rect.center
-        new_x = int(round(current_x / 20)) * 20
-        new_y = int(round(current_y / 20)) * 20
+        new_x = int(round(current_x / settings.TILE_SIZE)) * settings.TILE_SIZE
+        new_y = int(round(current_y / settings.TILE_SIZE)) * settings.TILE_SIZE
         self.rect.topleft = (new_x, new_y)

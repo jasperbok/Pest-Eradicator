@@ -1,24 +1,17 @@
-import math
-import os
-import random
 import sys
 
 import pygame
 from pygame.locals import *
 
 import gamescreen
-import helpers
+import settings
 
-WINDOW_WIDTH = 760
-WINDOW_HEIGHT = 480
-FPS = 40
-TILE_SIZE = 20
 
 class Game():
     def __init__(self):
         pygame.init()
         self.fps_clock = pygame.time.Clock()
-        self.window_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.window_surface = pygame.display.set_mode((settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
         pygame.display.set_caption('Pest Eradicator')
         self.load_screen('test.txt')
         self.game_loop()
@@ -43,6 +36,8 @@ class Game():
                     sys.exit()
             self.update()
             self.draw()
-            self.fps_clock.tick(FPS)
+            self.fps_clock.tick(settings.FPS)
 
-game = Game()
+
+if __name__ == "__main__":
+    game = Game()

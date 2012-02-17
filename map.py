@@ -3,7 +3,7 @@ import os
 import sys
 
 from tile import Tile
-import game
+import settings
 
 class Map():
     def __init__(self, file_name, window_surface_reference):
@@ -26,8 +26,8 @@ class Map():
         point -- A tuple containing an x-y co-ordinate (x, y).
 
         """
-        x_offset = int(math.floor(point[0] / game.TILE_SIZE))
-        y_offset = int(math.floor(point[1] / game.TILE_SIZE))
+        x_offset = int(math.floor(point[0] / settings.TILE_SIZE))
+        y_offset = int(math.floor(point[1] / settings.TILE_SIZE))
         return (x_offset, y_offset)
 
     def get_available_directions(self, point):
@@ -69,8 +69,8 @@ class Map():
         point -- A tuple containing an x-y co-ordinate (x, y).
 
         """
-        x_offset = int(math.floor(point[0] / 20))
-        y_offset = int(math.floor(point[1] / 20))
+        x_offset = int(math.floor(point[0] / settings.TILE_SIZE))
+        y_offset = int(math.floor(point[1] / settings.TILE_SIZE))
         return self.map_[y_offset][x_offset]
 
     def _generate_map_from_file(self, file_name):
@@ -84,8 +84,8 @@ class Map():
                     for char in line:
                         if char in "abcdefghijklmnopqrstuvwxyz-":
                             row.append(self._character_to_tile(char, (x_pos, y_pos)))
-                            x_pos += 20
-                    y_pos += 20
+                            x_pos += settings.TILE_SIZE
+                    y_pos += settings.TILE_SIZE
                     map_.append(row)
                 else:
                     # The line is a creature entry in the following format:
@@ -103,8 +103,8 @@ class Map():
 
         """
         if character == '-':
-            tile = Tile('grass', False)
+            tile = Tile('grass.png', False)
         elif character == 'a':
-            tile = Tile('dirt_road', True)
+            tile = Tile('dirt_road.png', True)
         tile.rect.topleft = start_position
         return tile
